@@ -108,6 +108,11 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
               onPressed: _showConfetti,
               child: Text("Celebrate 🎉"),
             ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _startCountdown,
+              child: Text('Reset Timer') ,
+              ),
           ],
         ),
       ),
