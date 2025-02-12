@@ -51,11 +51,16 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
   }
 
   void _startCountdown() {
-    _timer?.cancel();
-    setState(() {
-      _countdown = 5;
+    setState((){
+      _countdown = 10; // Reset Countdown to intial value
     });
+
+    _timer?.cancel(); // cancels the existin timer.
+
+     // Restart the heart animation
+    _controller.reset();
     _controller.repeat(reverse: true);
+
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_countdown > 0) {
         setState(() {
@@ -68,10 +73,14 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
     });
   }
 
+  void _showConfetti() {
+    _confettiController.play();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.pink,
+      backgroundColor: Colors.lightBlueAccent,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -97,7 +106,7 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
             ),
             SizedBox(height: 20),
             Text(
-              '$_countdown',
+              'Timer: $_countdown',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
@@ -106,18 +115,14 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _confettiController.play,
+              onPressed: _showConfetti,
               child: Text("Celebrate 🎉"),
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                if (_countdown == 0) {
-                  _startCountdown();
-                }
-              },
-              child: Text('Reset Timer'),
-            ),
+              onPressed: _startCountdown,
+              child: Text('Reset Timer') ,
+              ),
           ],
         ),
       ),
