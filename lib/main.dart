@@ -115,10 +115,13 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
             Stack(
               alignment: Alignment.center,
               children: [
-                ConfettiWidget(
+                ConfettiWidget( // Confetti controller.
                   confettiController: _confettiController,
                   blastDirectionality: BlastDirectionality.explosive,
                   shouldLoop: false,
+                  emissionFrequency: 0.1,
+                  numberOfParticles: 100, 
+                  gravity: 0.2,
                   colors: [Colors.red, Colors.blue, Colors.green, Colors.yellow],
                 ),
                 ScaleTransition(
@@ -133,7 +136,7 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
             ),
             SizedBox(height: 20),
             // Fading message
-            FadeTransition(
+            FadeTransition( // Fade in Transitions for messages.
               opacity: _fadeAnimation,
               child: Text(
                 _messages[_currentMessageIndex],
@@ -146,7 +149,7 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
             ),
             SizedBox(height: 20),
             Text(
-              'Timer: $_countdown',
+              'Timer: $_countdown', // Displays Timer.
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
