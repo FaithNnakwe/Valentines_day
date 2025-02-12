@@ -25,13 +25,26 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
+  late Animation<double> _fadeAnimation;
   int _countdown = 5;
   Timer? _timer;
   late ConfettiController _confettiController;
 
+  // List of pre-written Valentine's Day messages or love quotes
+  List<String> _messages = [
+    "Love is in the air 💕",
+    "You’re so beautiful when you smile.",
+    "You have a piece of my heart 💖",
+    "Happy Valentine's Day babe! 😘",
+    "My Love  for you will never fail.",
+  ];
+
+  int _currentMessageIndex = 0;
+
   @override
   void initState() {
     super.initState();
+
     _controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 800),
@@ -45,19 +58,28 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
       curve: Curves.easeInOut,
     ));
 
+    // Fade transition for the message text
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
+
     _confettiController = ConfettiController(duration: Duration(seconds: 4));
 
     _startCountdown();
   }
 
   void _startCountdown() {
-    setState((){
-      _countdown = 10; // Reset Countdown to intial value
+    setState(() {
+      _countdown = 10; // Reset Countdown to initial value
     });
 
-    _timer?.cancel(); // cancels the existin timer.
+    _timer?.cancel(); // Cancels the existing timer.
 
-     // Restart the heart animation
+    // Restart the heart animation
     _controller.reset();
     _controller.repeat(reverse: true);
 
@@ -70,6 +92,11 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
         _timer?.cancel();
         _controller.stop();
       }
+    });
+
+    // Cycle through messages after each reset
+    setState(() {
+      _currentMessageIndex = (_currentMessageIndex + 1) % _messages.length;
     });
   }
 
@@ -105,6 +132,19 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
               ],
             ),
             SizedBox(height: 20),
+            // Fading message
+            FadeTransition(
+              opacity: _fadeAnimation,
+              child: Text(
+                _messages[_currentMessageIndex],
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
             Text(
               'Timer: $_countdown',
               style: TextStyle(
@@ -121,8 +161,8 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: _startCountdown,
-              child: Text('Reset Timer') ,
-              ),
+              child: Text('Reset Timer'),
+            ),
           ],
         ),
       ),
