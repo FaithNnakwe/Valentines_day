@@ -51,7 +51,12 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
   }
 
   void _startCountdown() {
-    _timer = Timer.periodic(Duration(seconds: 10), (timer) {
+    _timer?.cancel();
+    setState(() {
+      _countdown = 5;
+    });
+    _controller.repeat(reverse: true);
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_countdown > 0) {
         setState(() {
           _countdown--;
@@ -61,10 +66,6 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
         _controller.stop();
       }
     });
-  }
-
-  void _showConfetti() {
-    _confettiController.play();
   }
 
   @override
@@ -105,14 +106,18 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _showConfetti,
+              onPressed: _confettiController.play,
               child: Text("Celebrate 🎉"),
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _startCountdown,
-              child: Text('Reset Timer') ,
-              ),
+              onPressed: () {
+                if (_countdown == 0) {
+                  _startCountdown();
+                }
+              },
+              child: Text('Reset Timer'),
+            ),
           ],
         ),
       ),
