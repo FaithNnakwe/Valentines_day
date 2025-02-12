@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:confetti/confetti.dart';
 import 'dart:async';
 
 void main() {
@@ -27,6 +27,7 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
   late Animation<double> _scaleAnimation;
   int _countdown = 5;
   Timer? _timer;
+  late ConfettiController _confettiController;
 
   @override
   void initState() {
@@ -44,11 +45,13 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
       curve: Curves.easeInOut,
     ));
 
+    _confettiController = ConfettiController(duration: Duration(seconds: 4));
+
     _startCountdown();
   }
 
   void _startCountdown() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(Duration(seconds: 10), (timer) {
       if (_countdown > 0) {
         setState(() {
           _countdown--;
@@ -60,21 +63,36 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
     });
   }
 
+  void _showConfetti() {
+    _confettiController.play();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.pink,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ScaleTransition(
-              scale: _scaleAnimation,
-              child: Icon(
-                Icons.favorite,
-                color: Colors.red,
-                size: 100,
-              ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                ConfettiWidget(
+                  confettiController: _confettiController,
+                  blastDirectionality: BlastDirectionality.explosive,
+                  shouldLoop: false,
+                  colors: [Colors.red, Colors.blue, Colors.green, Colors.yellow],
+                ),
+                ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: Icon(
+                    Icons.favorite,
+                    color: Colors.red,
+                    size: 100,
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 20),
             Text(
@@ -85,6 +103,11 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
                 fontWeight: FontWeight.bold,
               ),
             ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _showConfetti,
+              child: Text("Celebrate 🎉"),
+            ),
           ],
         ),
       ),
@@ -94,6 +117,7 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
   @override
   void dispose() {
     _controller.dispose();
+    _confettiController.dispose();
     _timer?.cancel();
     super.dispose();
   }
